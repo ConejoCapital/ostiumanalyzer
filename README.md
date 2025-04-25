@@ -26,9 +26,10 @@ This web application provides detailed analysis of trading performance for Ostiu
    - Clone this repository
    - Open `index.html` in your web browser
    - No server or installation required
+   - Alternatively, start a simple server: `python3 -m http.server 8000`
 
 2. **Online Demo**:
-   - Access the live demo at [Ostium Analyzer](https://example.com/ostium-analyzer) (replace with actual URL when deployed)
+   - Access the live demo at [GitHub Pages](https://conejocapital.github.io/ostiumanalyzer/) (if enabled)
 
 ## Data Source
 
@@ -72,6 +73,12 @@ For a complete implementation, we would need to:
 - Additional performance metrics and visualizations
 - Custom alerts and notifications
 
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this project.
+
+By submitting a pull request, you agree to the terms outlined in the CLA which grants ConejoCapital the rights to use your contributions.
+
 ## Technologies Used
 
 - HTML5
@@ -81,4 +88,6 @@ For a complete implementation, we would need to:
 
 ## License
 
-MIT 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 ConejoCapital 

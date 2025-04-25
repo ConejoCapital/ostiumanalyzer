@@ -106,6 +106,88 @@ async function scrapeOstiumData(accountAddress) {
 }
 */
 
+// Function to process imported trade data from scraper
+function processImportedTrades(importedTrades) {
+    // Normalize the scraped data to match our expected format
+    return importedTrades.map(trade => {
+        // Default to sample data structure if fields are missing
+        return {
+            date: trade.date || '',
+            time: trade.time || '',
+            market: trade.market || '',
+            side: trade.side || '',
+            leverage: trade.leverage || '0x',
+            size: parseFloat(trade.size) || 0,
+            sizeUsd: parseFloat(trade.size) || 0, // might need adjustment
+            collateral: parseFloat(trade.collateral) || 0,
+            operationType: trade.operationType || '',
+            closePrice: parseFloat(trade.price) || 0,
+            pnl: trade.pnl !== null ? parseFloat(trade.pnl) : null,
+            pnlPercent: trade.pnl !== null && trade.collateral ? 
+                (parseFloat(trade.pnl) / parseFloat(trade.collateral) * 100) : null
+        };
+    });
+}
+
+// Setup file import functionality
+function setupFileImport() {
+    const fileInput = document.getElementById('importFile');
+    const importButton = document.getElementById('importButton');
+    
+    if (!fileInput || !importButton) return;
+    
+    importButton.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                
+                if (Array.isArray(importedData) && importedData.length > 0) {
+                    const processedTrades = processImportedTrades(importedData);
+                    
+                    // Re-initialize the app with the imported data
+                    initializeApp(processedTrades);
+                    
+                    // Update UI to show import success
+                    const importStatus = document.getElementById('importStatus');
+                    if (importStatus) {
+                        importStatus.textContent = `Successfully imported ${processedTrades.length} trades`;
+                        importStatus.className = 'import-success';
+                        
+                        // Clear status after 5 seconds
+                        setTimeout(() => {
+                            importStatus.textContent = '';
+                            importStatus.className = '';
+                        }, 5000);
+                    }
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } catch (error) {
+                console.error('Error importing data:', error);
+                
+                const importStatus = document.getElementById('importStatus');
+                if (importStatus) {
+                    importStatus.textContent = 'Error importing data. Please check the file format.';
+                    importStatus.className = 'import-error';
+                }
+            }
+            
+            // Reset the file input
+            fileInput.value = '';
+        };
+        
+        reader.readAsText(file);
+    });
+}
+
 // Pair the open and close operations for P&L calculation
 function pairTradeOperations(trades) {
     const completedTrades = [];
@@ -525,7 +607,7 @@ function createPnLByMarketChart(trades) {
 
 function updateSummaryStats(stats) {
     // Use the exact P&L from Ostium if available
-    const ostiumTotalPnL = 78417.23; // From Ostium dashboard
+    const ostiumTotalPnL = stats.totalPnL || 78417.23; // Use calculated P&L if available, otherwise default
     
     document.getElementById('totalPnL').textContent = `$${ostiumTotalPnL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     document.getElementById('winRate').textContent = `${stats.winRate.toFixed(1)}%`;
@@ -599,9 +681,19 @@ function createExpandedChart(chartId) {
     modalChartContainer._chart = modalChart;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize the app with the provided data
+function initializeApp(data) {
+    // Destroy existing charts if any
+    const chartIds = ['returnsChart', 'cumulativeChart', 'marketDistChart', 'pnlByMarketChart'];
+    chartIds.forEach(id => {
+        const chart = document.getElementById(id);
+        if (chart && chart._chart) {
+            chart._chart.destroy();
+        }
+    });
+    
     // Process the trade data
-    const completedTrades = pairTradeOperations(tradeData);
+    const completedTrades = pairTradeOperations(data);
     
     // Calculate statistics
     const stats = calculateStats(completedTrades);
@@ -622,7 +714,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update the UI
     updateSummaryStats(stats);
     populateTradesTable(completedTrades);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize with sample data
+    initializeApp(tradeData);
     
     // Setup modal functionality
     setupModal();
+    
+    // Setup file import functionality
+    setupFileImport();
 }); 

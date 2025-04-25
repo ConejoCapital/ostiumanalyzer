@@ -12,11 +12,21 @@
         <h1>Ostium Trading Performance Analyzer</h1>
         <p class="subtitle">Account: 0x2e93f627bf36480b3ab1065dcbee95350bc7c99c</p>
         
-        <!-- Future functionality for account data scraping -->
-        <div class="account-input">
-            <input type="text" id="accountAddress" placeholder="Enter Ostium account address (0x...)">
-            <button id="analyzeButton" disabled title="Coming soon - Scraping functionality in development">Analyze Account</button>
-            <p class="note">Note: Currently using sample data. Live scraping coming soon.</p>
+        <div class="tools-container">
+            <!-- Import functionality -->
+            <div class="import-container">
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+                <button id="importButton" class="tool-button">Import JSON Data</button>
+                <span id="importStatus"></span>
+                <a href="scraper.html" target="_blank" class="tool-button">Scraper Tool</a>
+            </div>
+            
+            <!-- Future functionality for account data scraping -->
+            <div class="account-input">
+                <input type="text" id="accountAddress" placeholder="Enter Ostium account address (0x...)">
+                <button id="analyzeButton" disabled title="Coming soon - Scraping functionality in development">Analyze Account</button>
+                <p class="note">Note: Currently using sample data. Use the Scraper Tool to extract your own data.</p>
+            </div>
         </div>
     </header>
 
@@ -78,7 +88,7 @@
             <div class="table-container">
                 <h2>Trade History</h2>
                 <div class="data-note">
-                    <p>Note: Currently showing sample data. Complete trade history would require scraping all pages from Ostium.</p>
+                    <p>Note: Use the Scraper Tool to extract your own trading data and import it here.</p>
                 </div>
                 <table id="tradesTable">
                     <thead>
@@ -115,7 +125,8 @@
 
     <footer>
         <p>Data sourced from Ostium Trading Platform</p>
-        <p>Note: This is a demonstration project. For complete and accurate data, a proper scraping solution would be required.</p>
+        <p>Note: This is a demonstration project. For complete and accurate data, use the Scraper Tool.</p>
+        <p>Copyright &copy; 2025 ConejoCapital - <a href="https://github.com/ConejoCapital/ostiumanalyzer" target="_blank">GitHub Repository</a></p>
     </footer>
 
     <script src="app.js"></script>
